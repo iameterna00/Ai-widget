@@ -248,28 +248,25 @@ class ConversaPlay {
         });
     }
 
-    createMessageElement(message) {
-        const messageEl = document.createElement('div');
-        messageEl.className = `message ${message.type}`;
-        
-        const contentEl = document.createElement('div');
-        contentEl.className = 'message-content';
-        
-        const textEl = document.createElement('div');
-        textEl.className = 'message-text';
-        textEl.textContent = message.text;
-        
-        const timestamp = document.createElement('div');
-        timestamp.className = 'message-timestamp';
-        timestamp.textContent = this.formatTime(message.timestamp);
-        
-        contentEl.appendChild(textEl);
-        contentEl.appendChild(timestamp);
-        messageEl.appendChild(contentEl);
-        
-        return messageEl;
-    }
-
+  createMessageElement(message) {
+    const messageEl = document.createElement('div');
+    messageEl.className = `message ${message.type}`;
+    
+    const contentEl = document.createElement('div');
+    contentEl.className = 'message-content';
+    
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.textContent = message.text;
+    
+    // Removed timestamp element creation
+    
+    contentEl.appendChild(textEl);
+    // Removed timestamp appendChild
+    messageEl.appendChild(contentEl);
+    
+    return messageEl;
+}
     seekToPosition(e) {
         const rect = this.progressBar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
