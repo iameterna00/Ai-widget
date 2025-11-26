@@ -1,0 +1,329 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: rgb(54, 54, 54);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.widget {
+    width: 100%;
+    max-width: 800px;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.conversaplay-container {
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    max-height: 700px;
+}
+
+/* Tabs Styles */
+.tabs-container {
+    display: flex;
+    width: 100%;
+    justify-content: start;
+    background: transparent;
+    border: 1px solid #e1e8ed00;
+    gap: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #3D5A80;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    max-width: 150px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.tab-btn.active {
+    color: white;
+    border: 1px solid #3D5A80;
+    background: #3D5A80;
+}
+
+.conversaplay-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.conversaplay-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.conversaplay-header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.conversation-window {
+    flex: 1;
+    overflow-y: auto;
+    margin: 20px;
+    padding: 8px;
+    margin-bottom: 100px;
+    border-radius: 20px;
+    background: #F5F7FB;
+    scroll-behavior: smooth;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: messageFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes messageFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-content {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    position: relative;
+    word-wrap: break-word;
+    min-height: 1.2em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message.ai {
+    justify-content: flex-start;
+}
+
+.message.ai .message-content {
+    background: #FFFFFF;
+    color: #000000;
+    border-bottom-left-radius: 2px;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.user .message-content {
+    background: #3C587D;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.message-timestamp {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.indicator{
+    padding: 10px 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.AIclass{
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid #d1d5db;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    display: inline-block;
+}
+.userClass{
+    background-color: #3D5A80;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    display: inline-block;
+}
+.aispan{
+    margin-left: 4px;
+}
+
+.controls-container {
+    background: white;
+    padding: 20px;
+    display: flex;
+    width: 100%;
+    gap: 16px;
+    border-top: 1px solid #e1e8ed;
+}
+
+.timeline {
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e1e8ed;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.1s linear;
+    position: relative;
+}
+
+.progress-scrubber {
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease;
+}
+
+.progress-scrubber:active {
+    cursor: grabbing;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.control-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(32, 32, 32);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 50px;
+    max-width: 50px;
+}
+
+#playPauseBtn {
+    min-width: 50px;
+    max-width: 50px;
+    background: #e7eefd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#playPauseIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2px;
+    height: 100%;
+}
+
+.control-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(27, 30, 46, 0.24);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.control-btn.mute {
+    border-radius: 50%;
+}
+
+.control-btn.mute.muted {
+    background: #e74c3c;
+}
+
+@media (max-width: 640px) {
+    .conversaplay-container {
+        height: 95vh;
+        border-radius: 0;
+    }
+
+    .message-content {
+        max-width: 85%;
+    }
+
+    .tabs-container {
+        padding: 0 10px;
+    }
+
+    .tab-btn {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+}
