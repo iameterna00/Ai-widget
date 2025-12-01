@@ -15,6 +15,10 @@ class ConversaPlay {
         this.animationFrameId = null;
         this.hasEnded = false;
         
+        // Track the last message element and its type for grouping
+        this.lastMessageElement = null;
+        this.lastMessageType = null;
+        
         this.init();
     }
 
@@ -200,6 +204,10 @@ class ConversaPlay {
         this.progressFill.style.width = '0%';
         this.currentTimeEl.textContent = '0:00';
         
+        // Reset tracking variables
+        this.lastMessageElement = null;
+        this.lastMessageType = null;
+        
         // Update play button to play state
         this.playPauseBtn.querySelector('#playPauseIcon').textContent = '▶';
         
@@ -237,9 +245,15 @@ class ConversaPlay {
     }
 
     showMessage(message, index) {
-        const messageEl = this.createMessageElement(message);
-        messageEl.dataset.index = index;
-        this.conversationWindow.appendChild(messageEl);
+        // Check if this is a consecutive message from the same user
+        if (this.lastMessageElement && this.lastMessageType === message.type) {
+            // Add to existing message box with fade animation
+            this.appendToExistingMessage(message, index);
+        } else {
+            // Create new message box
+            this.createNewMessage(message, index);
+        }
+        
         this.renderedMessages.add(index);
         
         // Smooth scroll to bottom
@@ -248,25 +262,65 @@ class ConversaPlay {
         });
     }
 
-  createMessageElement(message) {
-    const messageEl = document.createElement('div');
-    messageEl.className = `message ${message.type}`;
-    
-    const contentEl = document.createElement('div');
-    contentEl.className = 'message-content';
-    
-    const textEl = document.createElement('div');
-    textEl.className = 'message-text';
-    textEl.textContent = message.text;
-    
-    // Removed timestamp element creation
-    
-    contentEl.appendChild(textEl);
-    // Removed timestamp appendChild
-    messageEl.appendChild(contentEl);
-    
-    return messageEl;
-}
+    createNewMessage(message, index) {
+        const messageEl = this.createMessageElement(message);
+        messageEl.dataset.index = index;
+        this.conversationWindow.appendChild(messageEl);
+        
+        // Update tracking variables
+        this.lastMessageElement = messageEl;
+        this.lastMessageType = message.type;
+    }
+
+    appendToExistingMessage(message, index) {
+        const contentEl = this.lastMessageElement.querySelector('.message-content');
+        const existingTexts = contentEl.querySelectorAll('.message-text');
+        const lastTextEl = existingTexts[existingTexts.length - 1];
+        
+        // Create a new text element for the additional message
+        const newTextEl = document.createElement('div');
+        newTextEl.className = 'message-text additional-message';
+        newTextEl.textContent = message.text;
+        newTextEl.dataset.index = index;
+        
+        // Add fade-in animation
+        newTextEl.style.opacity = '0';
+        newTextEl.style.transform = 'translateY(10px)';
+        newTextEl.style.maxHeight = '0';
+        newTextEl.style.overflow = 'hidden';
+        
+        // Add to existing message
+        lastTextEl.parentNode.insertBefore(newTextEl, lastTextEl.nextSibling);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            newTextEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease';
+            newTextEl.style.opacity = '1';
+            newTextEl.style.transform = 'translateY(0)';
+            newTextEl.style.maxHeight = '100px';
+        });
+
+        // Update the last message element to include this new content
+        this.lastMessageElement.dataset.index = index;
+    }
+
+    createMessageElement(message) {
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${message.type}`;
+        
+        const contentEl = document.createElement('div');
+        contentEl.className = 'message-content';
+        
+        const textEl = document.createElement('div');
+        textEl.className = 'message-text';
+        textEl.textContent = message.text;
+        
+        contentEl.appendChild(textEl);
+        messageEl.appendChild(contentEl);
+        
+        return messageEl;
+    }
+
     seekToPosition(e) {
         const rect = this.progressBar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
@@ -298,6 +352,10 @@ class ConversaPlay {
         this.conversationWindow.innerHTML = '';
         this.renderedMessages.clear();
         
+        // Reset tracking variables
+        this.lastMessageElement = null;
+        this.lastMessageType = null;
+        
         // Show all messages that should be visible at this time
         this.conversation.forEach((message, index) => {
             if (time >= message.timestamp) {
@@ -325,9 +383,11 @@ class ConversaPlay {
         this.audio = new Audio(this.audioSrc);
         this.setupAudio();
         
-        // Reset conversation display
+        // Reset conversation display and tracking
         this.conversationWindow.innerHTML = '';
         this.renderedMessages.clear();
+        this.lastMessageElement = null;
+        this.lastMessageType = null;
         this.progressFill.style.width = '0%';
         this.currentTimeEl.textContent = '0:00';
         this.totalTimeEl.textContent = '0:00';
@@ -340,10 +400,18 @@ const conversations = {
         conversation: [
             {
                 type: 'ai',
-                text: 'Thank you for calling Mile High HVAC, this is our AI receptionist. How can I help you today?',
+                text: 'Thank you for calling Mile High HVAC, this is our AI receptionist.',
                 timestamp: 0,
-                duration: 4
+                duration: 3.5
             },
+
+            {
+                type: 'ai',
+                text: 'How can I help you today?',
+                timestamp: 3.5,
+                duration: 0.5
+            },
+
             {
                 type: 'user',
                 text: 'Yeah, my AC isn\'t blowing cold air and it\'s getting really hot in the house.',
@@ -352,9 +420,15 @@ const conversations = {
             },
             {
                 type: 'ai',
-                text: 'Sorry to hear that — I can help get you scheduled right now. Just to confirm, is this for a residential home or a business?',
+                text: 'Sorry to hear that — I can help get you scheduled right now.',
                 timestamp: 10,
-                duration: 6
+                duration: 3
+            },
+            {
+                type: 'ai',
+                text: 'Just to confirm, is this for a residential home or a business?',
+                timestamp: 13,
+                duration: 3
             },
             {
                 type: 'user',
