@@ -597,8 +597,14 @@ const conversations = {
             },
             {
                 type: 'user',
-                text: 'I\'m calling because I was in a car accident last week and I\'m not sure what to do.',
-                timestamp: 3.5,
+                text: 'I\'m calling because I was in a car accident last week',
+                timestamp: 4,
+                duration: 5
+            },
+            {
+                type: 'user',
+                text: 'and I\'m not sure what to do.',
+                timestamp: 6.5,
                 duration: 5
             },
             {
@@ -610,89 +616,89 @@ const conversations = {
             {
                 type: 'ai',
                 text: ' Was anyone injured in the accident?',
-                timestamp: 12.5,
+                timestamp: 13,
                 duration: 6
             },
             {
                 type: 'user',
-                text: 'Yes, I had some back and neck pain. I\'ve already seen a doctor.',
+                text: 'Yes, I had some back and neck pain since the accident.',
                 timestamp: 15,
                 duration: 4
             },
             {
                 type: 'ai',
                 text: 'Thank you for letting me know. May I get your full name?',
-                timestamp: 19,
+                timestamp: 19.5,
                 duration: 3
             },
             {
                 type: 'user',
-                text: 'Sarah Johnson.',
+                text: 'Yeah, Sarah Johnson.',
                 timestamp: 22,
                 duration: 2
             },
             {
                 type: 'ai',
                 text: 'Thanks, Sarah. What\'s the best phone number and email to reach you?',
-                timestamp: 23.10,
+                timestamp: 25,
                 duration: 4
             },
             {
                 type: 'user',
                 text: '303-555-8193 and my email is sarahj@gmail.com.',
-                timestamp: 27,
+                timestamp: 29,
                 duration: 3
             },
             {
                 type: 'ai',
                 text: 'Got it. And were you the driver or a passenger?',
-                timestamp: 33,
+                timestamp: 36,
                 duration: 3
             },
             {
                 type: 'user',
-                text: 'I was the one driving.',
-                timestamp: 36.5,
+                text: 'I… I was the one driving.',
+                timestamp: 39.5,
                 duration: 2
             },
             {
                 type: 'ai',
                 text: 'Understood. I have an opening for a free consultation today at 3:30 PM or tomorrow at 10 AM.',
-                timestamp: 38.5,
+                timestamp: 41.5,
                 duration: 5
             },
             {
                 type: 'ai',
                 text: 'Which do you prefer?',
-                timestamp: 44,
+                timestamp: 47,
                 duration: 5
             },
             {
                 type: 'user',
                 text: 'Tomorrow at 10.',
-                timestamp: 46,
+                timestamp: 49,
                 duration: 1
             },
             {
                 type: 'ai',
-                text: 'You\'re confirmed for tomorrow at 10 AM with Attorney Anderson. You\'ll receive a confirmation email and a reminder text shortly.',
-                timestamp: 47.5,
+                text: 'You\'re confirmed for tomorrow at 10 AM. You\'ll receive a confirmation email and a reminder text shortly.',
+                timestamp: 50.5,
                 duration: 5
             },
             {
                 type: 'user',
                 text: 'Perfect, thanks so much.',
-                timestamp: 53,
+                timestamp: 56.5,
                 duration: 2
             },
             {
                 type: 'ai',
                 text: 'You\'re very welcome, Sarah. We look forward to helping you tomorrow.',
-                timestamp: 55,
+                timestamp: 58.5,
                 duration: 3
             }
         ],
-        audio: '../audios/lawfirm.mp3'
+        audio: '../audios/lawfirm_.mp3'
     },
 tab3: {
     conversation: [
