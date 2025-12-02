@@ -322,6 +322,21 @@ body {
 .control-btn.mute.muted {
     background: #e74c3c;
 }
+#restartIcon {
+    transform: scaleX(1); /* flip horizontally */
+    transform-origin: center; /* ensure rotation is around center */
+}
+
+#restartIcon.spinning {
+    animation: spin-reverse 0.3s linear;
+}
+
+@keyframes spin-reverse {
+    from { transform: scaleX(1) rotate(0deg); }
+    to   { transform: scaleX(1) rotate(360deg); } /* negative for counter-clockwise */
+}
+
+
 
 @media (max-width: 640px) {
     .conversaplay-container {

@@ -170,7 +170,8 @@ class ConversaPlay {
         this.currentTimeEl.textContent = this.formatTime(this.duration);
         
         // Reset play button to play state (it will restart when clicked)
-        this.playPauseBtn.querySelector('#playPauseIcon').textContent = '▶';
+        document.querySelector('#playIcon').style.display = 'block';
+        document.querySelector('#pauseIcon').style.display = 'none';
     }
 
     startAnimationLoop() {
@@ -197,31 +198,33 @@ class ConversaPlay {
         }
     }
 
-    // Mute button functionality replaced with restart
     restartConversation() {
         this.pause();
         this.audio.currentTime = 0;
         this.hasEnded = false;
-        
+
         // Clear and reset conversation display
         this.conversationWindow.innerHTML = '';
         this.renderedMessages.clear();
         this.progressFill.style.width = '0%';
         this.currentTimeEl.textContent = '0:00';
-        
+
         // Reset tracking variables
         this.lastMessageElement = null;
         this.lastMessageType = null;
-        
+
         // Update play button to play state
-        this.playPauseBtn.querySelector('#playPauseIcon').textContent = '▶';
-        
-        // Add visual feedback for restart
-        this.muteBtn.classList.add('restarting');
+        document.querySelector('#playIcon').style.display = 'block';
+        document.querySelector('#pauseIcon').style.display = 'none';
+
+        const restartIcon = document.querySelector('#restartIcon');
+        restartIcon.classList.add('spinning');
         setTimeout(() => {
-            this.muteBtn.classList.remove('restarting');
-        }, 300);
+            restartIcon.classList.remove('spinning');
+        }, 300); // match animation duration
+
     }
+
 
     updateProgress() {
         const progress = (this.audio.currentTime / this.duration) * 100;
