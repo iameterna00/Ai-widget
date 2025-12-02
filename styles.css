@@ -193,6 +193,10 @@ body {
 }
 .aispan{
     margin-left: 4px;
+    margin-right: 4px;
+}
+.iconai{
+    margin-left: 4px;
 }
 
 .controls-container {
@@ -322,7 +326,6 @@ body {
 @media (max-width: 640px) {
     .conversaplay-container {
         height: 95vh;
-
     }
 
     .message-content {

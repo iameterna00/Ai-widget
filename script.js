@@ -140,21 +140,26 @@ class ConversaPlay {
             this.pause();
         }
     }
+        play() {
+            this.audio.play();
 
-    play() {
-        this.audio.play();
-        this.playPauseBtn.querySelector('#playPauseIcon').textContent = '⏸';
-        this.hasEnded = false;
-        
-        this.startAnimationLoop();
-    }
+            document.querySelector('#playIcon').style.display = 'none';
+            document.querySelector('#pauseIcon').style.display = 'block';
 
-    pause() {
-        this.audio.pause();
-        this.playPauseBtn.querySelector('#playPauseIcon').textContent = '▶';
-       
-        this.stopAnimationLoop();
-    }
+            this.hasEnded = false;
+            this.startAnimationLoop();
+        }
+
+        pause() {
+            this.audio.pause();
+
+            document.querySelector('#playIcon').style.display = 'block';
+            document.querySelector('#pauseIcon').style.display = 'none';
+
+            this.stopAnimationLoop();
+        }
+
+
 
     handleAudioEnd() {
         this.hasEnded = true;
@@ -256,10 +261,8 @@ class ConversaPlay {
         
         this.renderedMessages.add(index);
         
-        // Smooth scroll to bottom
-        requestAnimationFrame(() => {
-            this.conversationWindow.scrollTop = this.conversationWindow.scrollHeight;
-        });
+        // Scroll to bottom after a short delay to ensure DOM is updated
+        this.scheduleScrollToBottom();
     }
 
     createNewMessage(message, index) {
@@ -282,26 +285,25 @@ class ConversaPlay {
         newTextEl.className = 'message-text additional-message';
         newTextEl.textContent = message.text;
         newTextEl.dataset.index = index;
-        
-        // Add fade-in animation
         newTextEl.style.opacity = '0';
         newTextEl.style.transform = 'translateY(10px)';
         newTextEl.style.maxHeight = '0';
         newTextEl.style.overflow = 'hidden';
-        
-        // Add to existing message
+        // Add to existing message WITHOUT animations initially
         lastTextEl.parentNode.insertBefore(newTextEl, lastTextEl.nextSibling);
         
-        // Animate in
-        requestAnimationFrame(() => {
-            newTextEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease';
-            newTextEl.style.opacity = '1';
-            newTextEl.style.transform = 'translateY(0)';
-            newTextEl.style.maxHeight = '100px';
-        });
-
         // Update the last message element to include this new content
         this.lastMessageElement.dataset.index = index;
+        
+        // Force reflow to ensure element is in DOM
+        newTextEl.offsetHeight;
+        
+        // Now apply the fade-in animation
+        newTextEl.style.opacity = '1';
+        newTextEl.style.transform = 'translateY(0)';
+        newTextEl.style.maxHeight = '100px';
+        newTextEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+   
     }
 
     createMessageElement(message) {
@@ -319,6 +321,13 @@ class ConversaPlay {
         messageEl.appendChild(contentEl);
         
         return messageEl;
+    }
+
+    scheduleScrollToBottom() {
+        // Use setTimeout to ensure DOM is updated before scrolling
+        setTimeout(() => {
+            this.conversationWindow.scrollTop = this.conversationWindow.scrollHeight;
+        }, 10);
     }
 
     seekToPosition(e) {
@@ -359,11 +368,51 @@ class ConversaPlay {
         // Show all messages that should be visible at this time
         this.conversation.forEach((message, index) => {
             if (time >= message.timestamp) {
-                this.showMessage(message, index);
+                // For seeking, we need to handle message grouping correctly
+                this.showMessageForSeek(message, index);
             }
         });
         
+        // Scroll to bottom after all messages are rendered
+        this.scheduleScrollToBottom();
+        
         this.updateProgress();
+    }
+
+    showMessageForSeek(message, index) {
+        // Check if this is a consecutive message from the same user
+        if (this.lastMessageElement && this.lastMessageType === message.type) {
+            // Add to existing message box WITHOUT animation for seeking
+            this.appendToExistingMessageForSeek(message, index);
+        } else {
+            // Create new message box
+            this.createNewMessage(message, index);
+        }
+        
+        this.renderedMessages.add(index);
+    }
+
+    appendToExistingMessageForSeek(message, index) {
+        const contentEl = this.lastMessageElement.querySelector('.message-content');
+        const existingTexts = contentEl.querySelectorAll('.message-text');
+        const lastTextEl = existingTexts[existingTexts.length - 1];
+        
+        // Create a new text element for the additional message
+        const newTextEl = document.createElement('div');
+        newTextEl.className = 'message-text additional-message';
+        newTextEl.textContent = message.text;
+        newTextEl.dataset.index = index;
+        
+        // Add to existing message WITHOUT any animations for seeking
+        lastTextEl.parentNode.insertBefore(newTextEl, lastTextEl.nextSibling);
+        
+        // Make it fully visible immediately (no animation)
+        newTextEl.style.opacity = '1';
+        newTextEl.style.transform = 'translateY(0)';
+        newTextEl.style.maxHeight = '100px';
+        
+        // Update the last message element to include this new content
+        this.lastMessageElement.dataset.index = index;
     }
 
     formatTime(seconds) {
@@ -421,101 +470,119 @@ const conversations = {
             {
                 type: 'ai',
                 text: 'Sorry to hear that — I can help get you scheduled right now.',
-                timestamp: 10,
+                timestamp: 10.5,
                 duration: 3
             },
             {
                 type: 'ai',
                 text: 'Just to confirm, is this for a residential home or a business?',
-                timestamp: 13,
+                timestamp: 14,
                 duration: 3
             },
             {
                 type: 'user',
-                text: 'It\'s my house.',
-                timestamp: 17,
+                text: 'This is for my house.',
+                timestamp: 18,
                 duration: 1
             },
             {
                 type: 'ai',
-                text: 'Got it. And are you noticing warm air, strange noises, or is it not turning on at all?',
-                timestamp: 19,
+                text: 'Got it.',
+                timestamp: 20,
+                duration: 4
+            },
+            {
+                type: 'ai',
+                text: 'And are you noticing warm air, strange noises, or is it not turning on at all?',
+                timestamp: 21,
                 duration: 4
             },
             {
                 type: 'user',
                 text: 'It\'s running, but it\'s blowing warm air.',
-                timestamp: 24.5,
+                timestamp: 27.5,
                 duration: 2
             },
             {
                 type: 'ai',
                 text: 'Thank you. I\'ll get a technician scheduled to take care of that for you. May I get your full name?',
-                timestamp: 27.5,
+                timestamp: 30,
                 duration: 4
             },
             {
                 type: 'user',
-                text: 'John Martinez.',
-                timestamp: 32.5,
+                text: 'Sarah Longo.',
+                timestamp: 36,
                 duration: 2
             },
             {
                 type: 'ai',
-                text: 'Thanks, John. What\'s the best phone number in case the technician needs to contact you?',
-                timestamp: 34.5,
+                text: 'Thanks, Sarah. What\'s the best phone number in case the technician needs to contact you?',
+                timestamp: 37.5,
                 duration: 4
             },
             {
                 type: 'user',
                 text: '303-555-7284.',
-                timestamp: 40,
+                timestamp: 41.5,
                 duration: 5
             },
             {
                 type: 'ai',
                 text: 'And what\'s address?',
-                timestamp: 46,
+                timestamp: 45.5,
                 duration: 1.5
             },
             {
                 type: 'user',
-                text: '4517 South Pearl Street, Denver.',
+                text: '4517 South Pearl Street, Denver, Colorado.',
                 timestamp: 48,
                 duration: 3
             },
             {
                 type: 'ai',
-                text: 'Perfect. I show an available service window for today between 4 and 6 PM or tomorrow between 9 and 11 AM. What works best for you?',
+                text: 'Perfect. I show an available service window for today between 4 and 6 PM or tomorrow between 9 and 11 AM.',
                 timestamp: 52,
-                duration: 10
+                duration: 9
+            },
+            {
+                type: 'ai',
+                text: ' What works best for you?',
+                timestamp: 58,
+                duration: 1
             },
             {
                 type: 'user',
                 text: 'Tomorrow morning.',
-                timestamp: 63,
+                timestamp: 60,
                 duration: 1
             },
             {
                 type: 'ai',
-                text: 'You\'re booked for tomorrow between 9 and 11 AM. Our technician will call before arriving. You\'ll also receive a confirmation text shortly.',
-                timestamp: 65,
+                text: 'You\'re booked for tomorrow between 9 and 11 AM. Our technician will call before arriving.',
+                timestamp: 61.5,
+                duration: 9
+            },
+            {
+                type: 'ai',
+                text: 'You\'ll also receive a confirmation text shortly.',
+                timestamp: 66.6,
                 duration: 9
             },
             {
                 type: 'user',
                 text: 'Awesome, thank you.',
-                timestamp: 74.5,
+                timestamp: 69.5,
                 duration: 1
             },
             {
                 type: 'ai',
-                text: 'You\'re all set, John. Thanks for choosing Mile High HVAC and we\'ll see you tomorrow!',
-                timestamp: 76,
+                text: 'You\'re all set, Sarah. Thanks for choosing Mile High HVAC and we\'ll see you tomorrow!',
+                timestamp: 72,
                 duration: 4
             }
         ],
-        audio: '../audios/HVAC.mp3'
+        audio: '../audios/HVAC_.mp3'
     },
     tab2: {
         conversation: [
@@ -528,185 +595,209 @@ const conversations = {
             {
                 type: 'user',
                 text: 'I\'m calling because I was in a car accident last week and I\'m not sure what to do.',
-                timestamp: 4,
+                timestamp: 3.5,
                 duration: 5
             },
             {
                 type: 'ai',
-                text: 'I\'m sorry to hear that. I can help schedule a consultation with one of our attorneys. Was anyone injured in the accident?',
-                timestamp: 10,
+                text: 'I\'m sorry to hear that. I can help schedule a consultation with one of our attorneys.',
+                timestamp: 8.6,
+                duration: 6
+            },
+            {
+                type: 'ai',
+                text: ' Was anyone injured in the accident?',
+                timestamp: 12.5,
                 duration: 6
             },
             {
                 type: 'user',
                 text: 'Yes, I had some back and neck pain. I\'ve already seen a doctor.',
-                timestamp: 18,
+                timestamp: 15,
                 duration: 4
             },
             {
                 type: 'ai',
                 text: 'Thank you for letting me know. May I get your full name?',
-                timestamp: 22,
+                timestamp: 19,
                 duration: 3
             },
             {
                 type: 'user',
                 text: 'Sarah Johnson.',
-                timestamp: 27,
+                timestamp: 22,
                 duration: 2
             },
             {
                 type: 'ai',
                 text: 'Thanks, Sarah. What\'s the best phone number and email to reach you?',
-                timestamp: 28.5,
+                timestamp: 23.10,
                 duration: 4
             },
             {
                 type: 'user',
-                text: '303-555-8193 and sarahj@gmail.com.',
-                timestamp: 34,
+                text: '303-555-8193 and my email is sarahj@gmail.com.',
+                timestamp: 27,
                 duration: 3
             },
             {
                 type: 'ai',
                 text: 'Got it. And were you the driver or a passenger?',
-                timestamp: 47.5,
+                timestamp: 33,
                 duration: 3
             },
             {
                 type: 'user',
-                text: 'I was the driver.',
-                timestamp: 52,
+                text: 'I was the one driving.',
+                timestamp: 36.5,
                 duration: 2
             },
             {
                 type: 'ai',
-                text: 'Understood. I have an opening for a free consultation today at 3:30 PM or tomorrow at 10 AM. Which do you prefer?',
-                timestamp: 54,
+                text: 'Understood. I have an opening for a free consultation today at 3:30 PM or tomorrow at 10 AM.',
+                timestamp: 38.5,
                 duration: 5
             },
             {
-                type: 'user',
-                text: 'Tomorrow at 10.',
-                timestamp: 65,
-                duration: 1
-            },
-            {
                 type: 'ai',
-                text: 'You\'re confirmed for tomorrow at 10 AM with Attorney Anderson. You\'ll receive a confirmation email and a reminder text shortly.',
-                timestamp: 67,
-                duration: 5
-            },
-            {
-                type: 'user',
-                text: 'Perfect, thanks so much.',
-                timestamp: 76,
-                duration: 2
-            },
-            {
-                type: 'ai',
-                text: 'You\'re very welcome, Sarah. We look forward to helping you tomorrow.',
-                timestamp: 78,
-                duration: 3
-            }
-        ],
-        audio: '../audios/law.mp3'
-    },
-    tab3: {
-        conversation: [
-            {
-                type: 'ai',
-                text: 'Thanks for calling PeakMotion Chiropractic, this is our AI receptionist on a recorded line. How can I help you today?',
-                timestamp: 0,
-                duration: 6
-            },
-            {
-                type: 'user',
-                text: 'Hi, I\'ve had some lower back pain for a while and I think it\'s time to get it looked at.',
-                timestamp: 7,
-                duration: 4
-            },
-            {
-                type: 'ai',
-                text: 'I\'m glad you called — we help with that every day. Is this your first visit to our clinic?',
-                timestamp: 13,
-                duration: 4
-            },
-            {
-                type: 'user',
-                text: 'Yes, it is.',
-                timestamp: 18,
-                duration: 1
-            },
-            {
-                type: 'ai',
-                text: 'Great! Let\'s get you taken care of. May I have your full name?',
-                timestamp: 20,
-                duration: 3
-            },
-            {
-                type: 'user',
-                text: 'Mark Daniels.',
-                timestamp: 24,
-                duration: 2
-            },
-            {
-                type: 'ai',
-                text: 'Thanks, Mark. What\'s the best phone number for your appointment confirmation?',
-                timestamp: 26,
-                duration: 4
-            },
-            {
-                type: 'user',
-                text: '720-555-4419.',
-                timestamp: 30,
-                duration: 2
-            },
-            {
-                type: 'ai',
-                text: 'One quick question — is your pain recent or something you\'ve been dealing with for a while?',
-                timestamp: 35,
-                duration: 4
-            },
-            {
-                type: 'user',
-                text: 'Probably about three months now.',
-                timestamp: 42,
-                duration: 2
-            },
-            {
-                type: 'ai',
-                text: 'Thanks for sharing that. I have availability for a new patient exam today at 5 PM or tomorrow at 11:30 AM. Which works for you?',
+                text: 'Which do you prefer?',
                 timestamp: 44,
                 duration: 5
             },
             {
                 type: 'user',
-                text: 'Tomorrow works.',
-                timestamp: 54,
+                text: 'Tomorrow at 10.',
+                timestamp: 46,
                 duration: 1
             },
             {
                 type: 'ai',
-                text: 'You\'re booked for tomorrow at 11:30 AM. You\'ll receive a text with our address and intake form.',
-                timestamp: 56,
-                duration: 4
+                text: 'You\'re confirmed for tomorrow at 10 AM with Attorney Anderson. You\'ll receive a confirmation email and a reminder text shortly.',
+                timestamp: 47.5,
+                duration: 5
             },
             {
                 type: 'user',
-                text: 'Awesome, thank you.',
-                timestamp: 62,
-                duration: 1
+                text: 'Perfect, thanks so much.',
+                timestamp: 53,
+                duration: 2
             },
             {
                 type: 'ai',
-                text: 'You\'re all set, Mark. We look forward to seeing you tomorrow at PeakMotion Chiropractic!',
-                timestamp: 64,
-                duration: 4
+                text: 'You\'re very welcome, Sarah. We look forward to helping you tomorrow.',
+                timestamp: 55,
+                duration: 3
             }
         ],
-        audio: '../audios/chiro.mp3'
-    }
+        audio: '../audios/lawfirm.mp3'
+    },
+tab3: {
+    conversation: [
+        {
+            type: 'ai',
+            text: 'Thanks for calling PeakMotion Chiropractic.',
+            timestamp: 0,
+            duration: 6
+        },
+        {
+            type: 'ai',
+            text: 'How can I help you today?',
+            timestamp: 2,
+            duration: 6
+        },
+        {
+            type: 'user',
+            text: 'Hey there, I\'ve had some lower back pain for a while and need to see someone about it.',
+            timestamp: 4.5,
+            duration: 4
+        },
+        {
+            type: 'ai',
+            text: 'We can definitely help with that. Is this your first visit to our clinic?',
+            timestamp: 9,
+            duration: 4
+        },
+        {
+            type: 'user',
+            text: 'Yes, it is.',
+            timestamp: 13,
+            duration: 1
+        },
+        {
+            type: 'ai',
+            text: 'Great! Let\'s get you taken care of. May I have your full name?',
+            timestamp: 14.5,
+            duration: 3
+        },
+        {
+            type: 'user',
+            text: 'Yeah! Mark Daniels.',
+            timestamp: 18,
+            duration: 2
+        },
+        {
+            type: 'ai',
+            text: 'Thanks, Mark. What\'s the best phone number for your appointment confirmation?',
+            timestamp: 20.5,
+            duration: 4
+        },
+        {
+            type: 'user',
+            text: '720-555-4419.',
+            timestamp: 24,
+            duration: 2
+        },
+        {
+            type: 'ai',
+            text: 'Okay great — is your pain recent or something you\'ve been dealing with for a while?',
+            timestamp: 28.5,
+            duration: 4
+        },
+        {
+            type: 'user',
+            text: 'Um... probably about three months now.',
+            timestamp: 33,
+            duration: 2
+        },
+        {
+            type: 'ai',
+            text: 'Thanks for sharing that. I have availability for a new patient exam today at 5 PM or tomorrow at 11:30 AM.',
+            timestamp: 36.5,
+            duration: 5
+        },
+        {
+            type: 'ai',
+            text: 'Which works for you?',
+            timestamp: 44,
+            duration: 5
+        },
+        {
+            type: 'user',
+            text: 'Tomorrow works with me.',
+            timestamp: 46,
+            duration: 1
+        },
+        {
+            type: 'ai',
+            text: 'You\'re booked for tomorrow at 11:30 AM. You\'ll receive a text with our address and intake form.',
+            timestamp: 48,
+            duration: 4
+        },
+        {
+            type: 'user',
+            text: 'Awesome, thank you for your help.',
+            timestamp: 53.5,
+            duration: 1
+        },
+        {
+            type: 'ai',
+            text: 'You\'re all set, Mark. We look forward to seeing you tomorrow at PeakMotion Chiropractic!',
+            timestamp: 57,
+            duration: 4
+        }
+    ],
+    audio: '../audios/chiropractor.mp3'
+}
 };
 
 // Initialize the conversation player with the first tab
