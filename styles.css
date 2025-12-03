@@ -9,12 +9,13 @@ body {
     background: rgb(54, 54, 54);
     display: flex;
     align-items: center;
+    overflow-x: hidden;
     justify-content: center;
     padding: 20px;
 }
 .widget {
     width: 100%;
-    max-width: 800px;
+    max-width: 575px;
     border-radius: 16px;
     overflow: hidden;
     display: flex;
@@ -23,16 +24,17 @@ body {
     flex-direction: column;
 }
 .conversaplay-container {
+    font-size: 14px;
+    scrollbar-width: thin;
     width: 100%;
-    max-width: 800px;
-    background: white;
+    max-width: 575px;
+    background:#F5F0E7;
     border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 90vh;
-    max-height: 700px;
+    height: 60vh;
+    max-height: 600px;
 }
 
 /* Tabs Styles */
@@ -41,34 +43,50 @@ body {
     width: 100%;
     justify-content: start;
     background: transparent;
-    border: 1px solid #e1e8ed00;
     gap: 10px;
 }
 
 .tab-btn {
     flex: 1;
-    padding: 12px 16px;
-    border: 1px solid #3D5A80;
+    padding: 8px 12px;
+    border: 1px solid #ffe4bb1d;
     border-radius: 20px;
     background: white;
     cursor: pointer;
     font-size: 14px;
     max-width: 150px;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 10px;
     color: #666;
     transition: all 0.3s ease;
 }
+.tabs-container .tab-btn {
+    text-transform: none !important;
+    font-variant: normal !important;
+}
+
+/* If the theme uses all-caps via font-variant */
+.tabs-container .tab-btn {
+    font-variant: normal;
+    text-transform: none;
+}
+
+/* More specific selector if needed */
+.widget .tabs-container .tab-btn {
+    text-transform: initial;
+    font-variant: initial;
+}
 
 .tab-btn:hover {
-    background: #e9ecef;
-    color: #333;
+    border: 1px solid #FED7AA;
+    color: #EA580C;
+    background-color:white ;
 }
 
 .tab-btn.active {
     color: white;
-    border: 1px solid #3D5A80;
-    background: #3D5A80;
+    border: 1px solid #C5591D;
+    background: #C5591D;
 }
 
 .conversaplay-header {
@@ -89,20 +107,22 @@ body {
     opacity: 0.9;
 }
 
+
 .conversation-window {
     flex: 1;
     overflow-y: auto;
-    margin: 20px;
+    border: 1px solid #e1e8ed;
+    margin: 10px 20px;
     padding: 8px;
-    margin-bottom: 100px;
     border-radius: 20px;
-    background: #F5F7FB;
+    background: #FAF8F3;
     scroll-behavior: smooth;
 }
 
 .message {
     display: flex;
     margin-bottom: 16px;
+    line-height: 1.4;
     opacity: 0;
     transform: translateY(10px);
     animation: messageFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
@@ -140,7 +160,7 @@ body {
 }
 
 .message.user .message-content {
-    background: #3C587D;
+    background: #1E293B;
     color: white;
     border-bottom-right-radius: 2px;
 }
@@ -165,6 +185,7 @@ body {
 .indicator{
     padding: 10px 20px;
     width: 100%;
+    font-size: 12px;
     display: flex;
     justify-content: space-between;
 }
@@ -176,19 +197,19 @@ body {
     gap: 4px;
     border: 1px solid #d1d5db;
     justify-content: center;
-    padding: 6px 12px;
-    border-radius: 16px;
+    padding: 4px 8px;
+    border-radius: 14px;
     display: inline-block;
 }
 .userClass{
-    background-color: #3D5A80;
+    background-color: #1E293B;
     color: white;
     display: flex;
     align-items: center;
     gap: 4px;
     justify-content: center;
-    padding: 6px 12px;
-    border-radius: 16px;
+    padding: 4px 8px;
+    border-radius: 14px;
     display: inline-block;
 }
 .aispan{
@@ -200,8 +221,8 @@ body {
 }
 
 .controls-container {
-    background: white;
-    padding: 20px;
+     background:#F5F0E7;
+    padding: 20px 20px;
     display: flex;
     width: 100%;
     gap: 16px;
@@ -225,7 +246,7 @@ body {
 .progress-bar {
     width: 100%;
     height: 8px;
-    background: #e1e8ed;
+    background: #E2DDD5;
     border-radius: 4px;
     cursor: pointer;
     position: relative;
@@ -234,7 +255,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(to right, #F97316, #d95f18);
     border-radius: 4px;
     width: 0%;
     transition: width 0.1s linear;
@@ -249,7 +270,7 @@ body {
     width: 16px;
     height: 16px;
     background: white;
-    border: 2px solid #667eea;
+    border: 2px solid #d95f18;
     border-radius: 50%;
     cursor: grab;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -275,14 +296,14 @@ body {
     box-sizing: border-box;
     border-radius: 50%;
     border: none;
-    background: #ffffff;
+    background:#E2DDD5;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    color: rgb(32, 32, 32);
+    color: rgb(255, 255, 255);
     transition: transform 0.2s, box-shadow 0.2s;
     min-width: 50px;
     max-width: 50px;
@@ -291,10 +312,20 @@ body {
 #playPauseBtn {
     min-width: 50px;
     max-width: 50px;
-    background: #e7eefd;
+    background: #C5591D;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+#playPauseBtn:hover {
+    background: #E98C00;
+    transition: all 0.3s ease-in-out;
+
+}
+#muteBtn:hover {
+    background: #ffffff;
+    transition: all 0.3s ease-in-out;
+
 }
 
 #playPauseIcon {
@@ -331,6 +362,37 @@ body {
     animation: spin-reverse 0.3s linear;
 }
 
+#muteBtn:active,
+#muteBtn.active {
+    background: #ffffff !important;
+    color: #000000 !important;
+    transform: translateY(0) !important;
+    box-shadow: none !important;
+}
+
+#muteBtn:hover #restartIcon {
+    fill: #000000;
+}
+
+#muteBtn:active #restartIcon {
+    fill: #000000;
+}
+
+
+#muteBtn {
+    background: #ffffff;
+}
+
+#muteBtn:hover {
+    background: #ffffff;
+}
+
+#muteBtn:active {
+    background: #ffffff;
+}
+
+
+
 @keyframes spin-reverse {
     from { transform: scaleX(1) rotate(0deg); }
     to   { transform: scaleX(1) rotate(360deg); } /* negative for counter-clockwise */
@@ -354,5 +416,136 @@ body {
     .tab-btn {
         padding: 10px 8px;
         font-size: 12px;
+    }
+}
+/* Tags Container Styles */
+.tags-container {
+    width: auto;
+    max-width: 500px;
+    background:#F5F0E7;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 16px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: tagsFadeIn 0.5s ease forwards;
+    animation-delay: 0.3s;
+    overflow: visible; 
+}
+
+@keyframes tagsFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tags-content {
+    padding: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    min-height: 60px;
+    background:#F5F0E7;
+    overflow-x: auto; 
+    overflow-y: hidden;
+    scrollbar-width: thin; 
+    scrollbar-color: #F97316 #ffffff; 
+    -webkit-overflow-scrolling: touch; 
+}
+
+/* Custom scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+.tags-content::-webkit-scrollbar {
+    height: 6px;
+     border-radius: 16px;
+}
+
+.tags-content::-webkit-scrollbar-track {
+    border-radius: 3px;
+     border-radius: 16px;
+}
+
+.tags-content::-webkit-scrollbar-thumb {
+    background: #F97316;
+    border-radius: 3px;
+     border-radius: 16px;
+}
+
+.tags-content::-webkit-scrollbar-thumb:hover {
+    background: #C5591D;
+     border-radius: 16px;
+}
+
+.conversation-tag {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transform: scale(0.8);
+    animation: tagFadeIn 0.3s ease forwards;
+    transition: all 0.2s ease;
+    background: white;
+    color: #333;
+    border: 1px solid #F97316;
+    flex-shrink: 0; /* Prevent tags from shrinking */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+@keyframes tagFadeIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.conversation-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+    border-color: #C5591D;
+}
+
+.tag-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F97316;
+}
+
+.tag-icon svg {
+    stroke: #F97316;
+}
+
+/* All tags have the same style */
+.tag-greeting,
+.tag-empathy,
+.tag-lead-intake,
+.tag-probing,
+.tag-scheduling,
+.tag-confirmation {
+    background: white;
+    color: #333;
+    border: 1px solid #F97316;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+
+    
+    .tags-content {
+        padding: 16px;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    
+    .conversation-tag {
+        padding: 6px 12px;
+        font-size: 11px;
     }
 }
